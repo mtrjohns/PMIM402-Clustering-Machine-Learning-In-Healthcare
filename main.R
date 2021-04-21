@@ -4,25 +4,28 @@
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
-# Install required packages (uncomment if not already installed)
+# Install required packages (un-comment if not already installed)
 #------------------------------------------------------------------------------
 #install.packages("tidyverse")
+#install.packages("cluster")
 
 #------------------------------------------------------------------------------
 # Load required Libraries
 #------------------------------------------------------------------------------
-library(tidyverse)
-
+library(tidyverse) # data manipulation
+library(cluster) # Hierarchical clustering algorithms
 
 #------------------------------------------------------------------------------
-# Load required dataset
+# Load required data set
 #------------------------------------------------------------------------------
-df <- read.csv("heart-c.csv")
+heart <- read.csv("heart-c.csv")
 
-# View dataset
-view(df)
+# View data set
+view(heart)
 
 # Check data for NA's
-df %>% summary
+heart %>% summary
 
-
+# Remove labels and identifier columns to simulate unsupervised learning
+# 'X' label and 'num' identifier
+heart <- heart %>% select(-X, -num)
