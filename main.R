@@ -1,14 +1,19 @@
 #------------------------------------------------------------------------------
 # Clustering - PMIM402
 # Michael Johns - 853369
+#
+# # NOTE: Run line by line - sometimes a plot will appear blank
+#         - if run too quickly in succession
+#
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
-# Install required packages (un-comment if not already installed)
+# Install required packages
 #------------------------------------------------------------------------------
-#install.packages("tidyverse")
-#install.packages("factoextra")
-#install.packages("cluster")
+install.packages("tidyverse")
+install.packages("factoextra")
+install.packages("cluster")
+install.packages("dendextend")
 
 #------------------------------------------------------------------------------
 # Load required Libraries
@@ -16,6 +21,7 @@
 library(tidyverse) # Data manipulation
 library(factoextra) # Cluster output
 library(cluster) # Hierarchical clustering algorithms
+library(dendextend) # Hierarchical clustering plot
 
 #------------------------------------------------------------------------------
 # Load required data set
@@ -23,7 +29,7 @@ library(cluster) # Hierarchical clustering algorithms
 heart <- read.csv("heart-c.csv")
 
 # View data set
-view(heart)
+#view(heart)
 
 #------------------------------------------------------------------------------
 # Check data and remove rows containing NA
@@ -75,28 +81,22 @@ heart$ca <- as.numeric(heart$ca)
 heart$thal <- as.factor(heart$thal)
 heart$thal <- as.numeric(heart$thal)
 
+# verify columns have been removed
+#view(heart)
+
 #------------------------------------------------------------------------------
-# scale values to aid plotting
+# Scale values to aid plotting
 #------------------------------------------------------------------------------
 heartNormalised <- as.data.frame(scale(heart))
-View(head(heartNormalised))
+#View(head(heartNormalised))
 
 #------------------------------------------------------------------------------
-# Plot histograms of each feature to view distribution
+# Run k-means with different amount of clusters
+# NOTE: Run line by line - sometimes a plot will appear blank
+#         - if run too quickly in succession
 #------------------------------------------------------------------------------
-heartNormalised %>%
-  gather(attributes, value, 1:13) %>%
-  ggplot(aes(x = value)) +
-  geom_histogram(fill = 'lightblue2', color = 'black', bins = 15) +
-  facet_wrap(~attributes, scales = 'free_x') +
-  labs(x="Values", y="Frequency") +
-  ggtitle("Normalised Heart Data Histogram") +
-  theme_bw()
-
-# run k-means with different amount of clusters
 heartKMeans2 <- kmeans(heartNormalised, centers = 2)
-heartKMeans2$cluster
-
+#View(heartKMeans2)
 fviz_cluster(heartKMeans2, geom = "point", data = heartNormalised)
 
 heartKMeans3 <- kmeans(heartNormalised, centers = 3)
@@ -112,15 +112,16 @@ heartKMeans5 <- kmeans(heartNormalised, centers = 5)
 fviz_cluster(heartKMeans5, geom = "point", data = heartNormalised)
 
 #------------------------------------------------------------------------------
-# Plot histograms of each feature to view distribution
+# Run hierarchical clustering
 #------------------------------------------------------------------------------
-error<-vector()
+dist_mat <- dist(heartNormalised, method = 'euclidean')
+hclust_avg <- hclust(dist_mat, method = 'average')
+plot(hclust_avg)
 
-for (i in 1:15){
-  error[i]<-kmeans(heartNormalised,i)$tot.withinss 
-}
-
-# error plot to determine optimum cluster amount
-plot(error)
-
+#------------------------------------------------------------------------------
+# Run hierarchical dendogram to show clustering
+#------------------------------------------------------------------------------
+avg_dend_obj <- as.dendrogram(hclust_avg)
+avg_col_dend <- color_branches(avg_dend_obj, h = 5)
+plot(avg_col_dend) + title("Hierarchical Dendogram (Coloured)")
 
