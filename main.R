@@ -10,10 +10,10 @@
 #------------------------------------------------------------------------------
 # Install required packages
 #------------------------------------------------------------------------------
-install.packages("tidyverse")
-install.packages("factoextra")
-install.packages("cluster")
-install.packages("dendextend")
+#install.packages("tidyverse")
+#install.packages("factoextra")
+#install.packages("cluster")
+#install.packages("dendextend")
 
 #------------------------------------------------------------------------------
 # Load required Libraries
